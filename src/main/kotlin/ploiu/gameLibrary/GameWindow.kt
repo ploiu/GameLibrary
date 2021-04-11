@@ -1,6 +1,6 @@
 package ploiu.gameLibrary
 
-import ploiu.gameLibrary.event.GameWindowCloseAdapter
+import ploiu.gameLibrary.event.GameExitEvent
 import ploiu.gameLibrary.extensions.copyPixelsFrom
 import java.awt.Dimension
 import java.awt.Graphics
@@ -8,6 +8,7 @@ import java.awt.Graphics2D
 import java.awt.event.ComponentAdapter
 import java.awt.event.ComponentEvent
 import java.awt.event.WindowAdapter
+import java.awt.event.WindowEvent
 import java.awt.image.BufferedImage
 import javax.swing.JFrame
 import javax.swing.JPanel
@@ -20,12 +21,12 @@ class GameWindow(title: String, size: Dimension) : JFrame(title) {
     private var image: BufferedImage
     private var panel: JPanel
     var doubleBuffered: Boolean
-    private var onCloseFunction: GameWindowCloseAdapter? = null
 
     init {
         this.size = size
         this.image = BufferedImage(size.width, size.height, BufferedImage.TYPE_INT_ARGB)
         this.graphics = image.createGraphics()
+        // custom JPanel that draws our image
         this.panel = object : JPanel() {
             override fun paint(graphics: Graphics?) {
                 // TODO only paint when necessary
@@ -49,6 +50,7 @@ class GameWindow(title: String, size: Dimension) : JFrame(title) {
                 window.render()
             }
         })
+        this.setOnCloseListener()
     }
 
     override fun isDoubleBuffered(): Boolean = doubleBuffered
@@ -63,11 +65,16 @@ class GameWindow(title: String, size: Dimension) : JFrame(title) {
         this.isUndecorated = true
     }
 
-    fun setOnCloseListener(func: Function0<Unit>) {
-        // remove any previous close listener
-        this.removeWindowListener(this.onCloseFunction)
-        this.onCloseFunction = GameWindowCloseAdapter(func)
-        this.addWindowListener(this.onCloseFunction)
+    /**
+     * registers an on closing listener to send a game event
+     */
+    private fun setOnCloseListener() {
+        this.addWindowListener(object : WindowAdapter() {
+            override fun windowClosing(e: WindowEvent?) {
+                super.windowClosing(e)
+                Ploiu.postEvent(GameExitEvent(this@GameWindow))
+            }
+        })
     }
 }
 

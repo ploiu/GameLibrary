@@ -1,5 +1,5 @@
 package ploiu.gameLibrary.exception
 
-class UnrecoverableGameException(message: String): Exception(message) {
+open class UnrecoverableGameException(message: String): Exception(message) {
     
 }
