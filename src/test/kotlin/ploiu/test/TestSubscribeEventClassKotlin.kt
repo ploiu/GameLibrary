@@ -2,9 +2,12 @@ package ploiu.test
 
 import ploiu.gameLibrary.event.annotation.SubscribeEvent
 
+@Suppress("UNUSED_PARAMETER", "UNUSED")
 class TestSubscribeEventClassKotlin {
-    @SubscribeEvent(TestEvent::class)
-    fun test(event: TestEvent) {
-
+    companion object {
+        @JvmStatic
+        @SubscribeEvent(TestEvent::class)
+        fun test(event: TestEvent) {
+        }
     }
 }

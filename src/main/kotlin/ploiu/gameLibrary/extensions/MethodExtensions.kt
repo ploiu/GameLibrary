@@ -1,7 +1,9 @@
 package ploiu.gameLibrary.extensions
 
+import ploiu.gameLibrary.event.GameEvent
 import ploiu.gameLibrary.exception.UnrecoverableGameException
 import java.lang.reflect.Method
+import java.lang.reflect.Modifier
 import kotlin.reflect.KClass
 
 /**
@@ -37,3 +39,6 @@ fun <T> Method.getAnnotation(annotationClass: KClass<out T>): T? where T : Any {
         throw UnrecoverableGameException("This should never happen, but issue is that we have an annotation but could not find it!")
     }
 }
+
+fun Method.isValidForEventHandler(event: Class<out GameEvent>): Boolean =
+    this.parameterCount == 1 && this.parameterTypes[0] == event && Modifier.isStatic(this.modifiers)

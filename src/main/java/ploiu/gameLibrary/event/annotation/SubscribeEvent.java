@@ -8,13 +8,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * used to annotate a function as a static event handler. These functions must take a single argument which must be the same type
+ * used to annotate a function as a static event handler. These functions must be static and take a single argument which must be the same type
  * as the Class passed into this annotation
  * e.g.
  * <pre>
  * // ... class declaration etc
  * {@code @SubscribeEvent(GameCloseEvent.class)
- * fun example(event: GameCloseEvent) {
+ * public static void example(GameCloseEvent event) {
  * // ...
  * }
  * </pre>

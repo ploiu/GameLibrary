@@ -1,7 +1,8 @@
 package ploiu.gameLibrary
 
 import org.junit.jupiter.api.assertThrows
-import ploiu.gameLibrary.event.GameExitEvent
+import ploiu.gameLibrary.event.DynamicEventHandler
+import ploiu.gameLibrary.event.GameEvent
 import ploiu.gameLibrary.event.annotation.SubscribeEvent
 import ploiu.gameLibrary.exception.InvalidEventHandlerException
 import ploiu.gameLibrary.exception.TerminalInvalidEventHandlerException
@@ -17,10 +18,11 @@ class CoreTests {
         val classes =
             listOf<Class<*>>(TestSubscribeEventClassJava::class.java, TestSubscribeEventClassKotlin::class.java)
         Ploiu.registerStaticEventHandlers(*classes.toTypedArray())
-        assertEquals(2, Ploiu.eventHandlers[TestEvent::class.java]?.size)
+        assertEquals(2, Ploiu.staticEventHandlers[TestEvent::class.java]?.size)
     }
 
     @Test
+    @Suppress("UNUSED_PARAMETER", "UNUSED")
     fun testRegisterStaticEventHandlersThrowsExceptionForInvalidHandler() {
         class BadHandler {
             @SubscribeEvent(TestEvent::class)
@@ -34,17 +36,14 @@ class CoreTests {
 
     @Test
     fun testDynamicRegisterEventHandler() {
-        Ploiu.registerEventHandler(TestEvent::class, ::eventHandler)
-        assertEquals(1, Ploiu.eventHandlers[TestEvent::class.java]?.size)
+        Ploiu.registerEventHandler(DynamicEventHandler(TestEvent::class) {})
+        assertEquals(1, Ploiu.dynamicEventHandlers[TestEvent::class.java]?.size)
     }
 
     @Test
     fun testDynamicRegisterEventHandlerThrowsExceptionIfHandlerIsBad() {
         assertThrows<InvalidEventHandlerException> {
-            Ploiu.registerEventHandler(GameExitEvent::class, ::eventHandler)
+            Ploiu.registerEventHandler(DynamicEventHandler(GameEvent::class) {})
         }
     }
-
-    // kotlin reflect cannot introspect local functions, so it must be declared outside of its test method
-    private fun eventHandler(event: TestEvent) {}
 }
