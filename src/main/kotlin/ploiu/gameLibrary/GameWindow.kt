@@ -1,14 +1,11 @@
 package ploiu.gameLibrary
 
-import ploiu.gameLibrary.event.GameExitEvent
+import ploiu.gameLibrary.event.*
 import ploiu.gameLibrary.extensions.copyPixelsFrom
 import java.awt.Dimension
 import java.awt.Graphics
 import java.awt.Graphics2D
-import java.awt.event.ComponentAdapter
-import java.awt.event.ComponentEvent
-import java.awt.event.WindowAdapter
-import java.awt.event.WindowEvent
+import java.awt.event.*
 import java.awt.image.BufferedImage
 import javax.swing.JFrame
 import javax.swing.JPanel
@@ -51,6 +48,8 @@ class GameWindow(title: String, size: Dimension) : JFrame(title) {
             }
         })
         this.setOnCloseListener()
+        this.setKeyboardListeners()
+        this.setMouseListeners()
     }
 
     override fun isDoubleBuffered(): Boolean = doubleBuffered
@@ -73,6 +72,69 @@ class GameWindow(title: String, size: Dimension) : JFrame(title) {
             override fun windowClosing(e: WindowEvent?) {
                 super.windowClosing(e)
                 Ploiu.postEvent(GameExitEvent(this@GameWindow))
+            }
+        })
+    }
+
+    private fun setKeyboardListeners() {
+        this.addKeyListener(object : KeyAdapter() {
+            override fun keyTyped(e: KeyEvent?) {
+                if (e != null) {
+                    Ploiu.postEvent(KeyboardTypeEvent(e))
+                }
+            }
+
+            override fun keyPressed(e: KeyEvent?) {
+                if (e != null) {
+                    Ploiu.postEvent(KeyboardDownEvent(e))
+                }
+            }
+
+            override fun keyReleased(e: KeyEvent?) {
+                if (e != null) {
+                    Ploiu.postEvent(KeyboardReleaseEvent(e))
+                }
+            }
+        })
+    }
+
+    private fun setMouseListeners() {
+        this.addMouseListener(object : MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent?) {
+                if (e != null) {
+                    println("Clicked frame from thread ${Thread.currentThread().name}")
+                    Ploiu.postEvent(MouseClickEvent(e))
+                }
+            }
+
+            override fun mousePressed(e: MouseEvent?) {
+                if (e != null) {
+                    Ploiu.postEvent(MousePressedEvent(e))
+                }
+            }
+
+            override fun mouseReleased(e: MouseEvent?) {
+                if (e != null) {
+                    Ploiu.postEvent(MouseReleaseEvent(e))
+                }
+            }
+
+            override fun mouseEntered(e: MouseEvent?) {
+                if (e != null) {
+                    Ploiu.postEvent(MouseEnteredEvent(e))
+                }
+            }
+
+            override fun mouseExited(e: MouseEvent?) {
+                if (e != null) {
+                    Ploiu.postEvent(MouseExitEvent(e))
+                }
+            }
+
+            override fun mouseWheelMoved(e: MouseWheelEvent?) {
+                if (e != null) {
+                    Ploiu.postEvent(MouseScrolledEvent(e))
+                }
             }
         })
     }

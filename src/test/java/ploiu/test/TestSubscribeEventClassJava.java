@@ -1,9 +1,9 @@
 package ploiu.test;
 
-import ploiu.gameLibrary.event.annotation.SubscribeEvent;
+import ploiu.gameLibrary.event.annotation.EventHandler;
 
 public class TestSubscribeEventClassJava {
-	@SubscribeEvent(TestEvent.class)
+	@EventHandler(TestEvent.class)
 	public static void test(TestEvent e) {
 	}
 }
