@@ -62,7 +62,7 @@ object Ploiu {
     }
 
     /**
-     * Executes all handlers for all events in the current pool, and marks each handled event has
+     * Executes all handlers for all events in the current pool, and marks each handled event as
      * handled. While events are being processed, events cannot be submitted to the pool as it would throw a [ConcurrentModificationException]
      */
     fun processEvents() {
@@ -99,11 +99,11 @@ object Ploiu {
      * This method locks the event pool and clears events that are already handled. This action is thread safe
      */
     fun tick(time: Long) {
-        // the user is likely done iterating over events, so allow accepting of events again
-        this.acceptingEvents = true
         synchronized(this.internal_events) {
             this.internal_events.removeIf { it.handled }
         }
+        // the user is likely done iterating over events, so allow accepting of events again
+        this.acceptingEvents = true
         try {
             Thread.sleep(time)
         } catch (e: InterruptedException) {

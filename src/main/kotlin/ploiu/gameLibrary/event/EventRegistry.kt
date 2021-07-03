@@ -22,7 +22,7 @@ object EventRegistry {
      * classes as event handlers
      */
     fun registerStaticEventHandlers(vararg classes: Class<*>) {
-        // iterate through all classes, get their functions marked as @SubscribeEvent, and add them to the eventHandlers
+        // iterate through all classes, get their functions marked as @EventHandler, and add them to the eventHandlers
         val handlers = mutableListOf<Method>()
         for (clazz in classes) {
             val functions = clazz.methods
@@ -32,7 +32,7 @@ object EventRegistry {
                 }
             }
         }
-        // all the handlers have a @SubscribeEvent annotation, so we can get the annotation from each handler and determine the type
+        // all the handlers have a @EventHandler annotation, so we can get the annotation from each handler and determine the type
         handlers.groupBy { it.getAnnotation(EventHandler::class.java)?.value }
             .forEach {
                 this.staticEventHandlers[it.key!!.java] = it.value.toMutableList()
@@ -74,7 +74,7 @@ object EventRegistry {
 
     /**
      * ensures that all registered event handlers are in the correct format.
-     * A correct format means that the method must accept 1 argument of the same type passed to the `@SubscribeEvent` annotation on it, and the method must be static
+     * A correct format means that the method must accept 1 argument of the same type passed to the `@EventHandler` annotation on it, and the method must be static
      */
     private fun validateEventHandlers() {
         for (entry in this.staticEventHandlers) {
@@ -86,7 +86,7 @@ object EventRegistry {
                     val handlerClass = handler.declaringClass
                     val handlerName = handler.name
                     throw TerminalInvalidEventHandlerException(
-                        """Invalid event handler: Event Handler must be a static method that takes exactly 1 argument of the same type on the @SubscribeEvent annotation.
+                        """Invalid event handler: Event Handler must be a static method that takes exactly 1 argument of the same type on the @EventHandler annotation.
                         |${handlerClass}.${handlerName} is required to take the type ${requiredArgType.typeName} as the only argument, but it takes ${handler.parameterCount} arguments and the first argument is the type ${handler.parameterTypes[0].typeName} 
                     """.trimMargin()
                     )
